@@ -1,9 +1,16 @@
 <template>
   <div>
+    <BaseHeader/>
     <router-view/>
+    <BaseFooter/>
   </div>
 </template>
 
 <script>
-export default {};
+import BaseHeader from '@/base/BaseHeader.vue';
+import BaseFooter from '@/base/BaseFooter.vue';
+
+export default {
+  components: { BaseHeader, BaseFooter },
+};
 </script>
