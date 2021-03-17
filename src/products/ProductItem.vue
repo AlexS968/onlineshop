@@ -14,7 +14,7 @@
               {{ product.price | numberFormat }} ₽
             </span>
 
-    <BlockColors :colors="colors" :selected-color-id.sync="selectedColorId"/>
+    <BlockColors type="radio" :colors="colors" :selected-color-id.sync="selectedColorId"/>
 
   </li>
 </template>
