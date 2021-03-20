@@ -77,7 +77,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import BlockColors from '@/common/BlockColors.vue';
+import BlockColors from '@/components/common/BlockColors.vue';
 
 export default {
   data() {

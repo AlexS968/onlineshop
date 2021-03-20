@@ -29,9 +29,9 @@
 
 <script>
 import enumerate from '@/helpers/enumerate';
-import ProductList from '@/products/ProductList.vue';
-import BasePagination from '@/base/BasePagination.vue';
-import ProductFilter from '@/products/ProductFilter.vue';
+import ProductList from '@/components/products/ProductList.vue';
+import BasePagination from '@/components/base/BasePagination.vue';
+import ProductFilter from '@/components/products/ProductFilter.vue';
 import { mapActions, mapState } from 'vuex';
 
 export default {

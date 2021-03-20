@@ -1,13 +1,13 @@
 <template>
   <li class="catalog__item">
-    <a class="catalog__pic" href="#">
+    <router-link class="catalog__pic" :to="{name:'product', params:{id:product.id}}">
       <img :src="computedImage" :alt="product.title">
-    </a>
+    </router-link>
 
     <h3 class="catalog__title">
-      <a href="#">
+      <router-link :to="{name:'product', params:{id:product.id}}">
         {{ product.title }}
-      </a>
+      </router-link>
     </h3>
 
     <span class="catalog__price">
@@ -21,7 +21,8 @@
 
 <script>
 import numberFormat from '@/helpers/numberFormat';
-import BlockColors from '@/common/BlockColors.vue';
+import image from '@/helpers/image';
+import BlockColors from '@/components/common/BlockColors.vue';
 
 export default {
   data() {
@@ -39,17 +40,7 @@ export default {
       return this.product.colors ? this.product.colors.map((obj) => obj.color) : [];
     },
     computedImage() {
-      if (this.selectedColorId === 0) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.product.colors.length; i++) {
-          if (this.product.colors[i].gallery) {
-            return this.product.colors[i].gallery[0].file.url;
-          }
-        }
-        return 'img/no_photo_available.jpg';
-      }
-      return this.product.colors.filter((o) => o.color.id === this.selectedColorId)
-        .map((o) => o.gallery[0].file.url)[0];
+      return image(this.product, this.selectedColorId);
     },
   },
 };

@@ -7,8 +7,25 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    userAccessKey: null,
+    dataLoading: false,
+    dataTransferError: false,
   },
   mutations: {
+    updateUserAccessKey(state, accessKey) {
+      state.userAccessKey = accessKey;
+    },
+    changeDataLoading(state, dataLoading) {
+      state.dataLoading = dataLoading;
+    },
+    changeDataTransferError(state, dataTransferError) {
+      state.dataTransferError = dataTransferError;
+    },
+  },
+  getters: {
+    getUserAccessKey(state) {
+      return state.userAccessKey;
+    },
   },
   actions: {
   },
