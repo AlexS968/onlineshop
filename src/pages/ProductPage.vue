@@ -21,7 +21,8 @@
     </div>
 
     <section class="item">
-      <div class="item__pics pics">
+      <div v-if="productAddSending"><BlockPreloader class="preloader big"/></div>
+      <div class="item__pics pics" v-else>
         <div class="pics__wrapper">
           <img width="570" height="570" :src="computedImage"
                srcset="" :alt="productData.title">
@@ -41,13 +42,13 @@
           {{ productData.title }}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST">
+          <form class="form" action="#" method="POST" @submit.prevent="addToCart">
             <div class="item__row item__row--center">
 
               <BlockCounter :amount.sync="productAmount"/>
 
               <b class="item__price">
-                {{ productData.price | numberFormat }} ₽
+                {{ productData.price * productAmount | numberFormat }} ₽
               </b>
             </div>
 
@@ -62,18 +63,23 @@
                 <legend class="form__legend">Размер</legend>
                 <label class="form__label form__label--small form__label--select"
                        v-if="productData.sizes">
-                  <select class="form__select" type="text" name="category" v-model="selectedSize">
-                    <option value="" disabled selected>Выберите размер</option>
-                    <option :value="size.title" v-for="size in productData.sizes"
-                            :key="size.id">{{ size.title }}</option>
+                  <select class="form__select" name="category" v-model="selectedSize">
+                    <option :value="null" selected disabled hidden>Выберите размер</option>
+                    <option v-for="size in productData.sizes" :key="size.id" :value="size">
+                      {{ size.title }}
+                    </option>
                   </select>
                 </label>
               </fieldset>
             </div>
 
-            <button class="item__button button button--primery" type="submit">
-              В корзину
+            <button class="item__button button button--primery"
+                    type="submit" :disabled="productAddSending || !selectedSize">
+              <div v-if="productAddSending">Добавляем товар...</div>
+              <div v-else>В корзину</div>
             </button>
+
+            <div v-if="productAdded">Товар добавлен в корзину</div>
           </form>
         </div>
       </div>
@@ -122,6 +128,7 @@ import image from '@/helpers/image';
 import imageList from '@/helpers/imageList';
 import BlockColors from '@/components/common/BlockColors.vue';
 import BlockCounter from '@/components/common/BlockCounter.vue';
+import BlockPreloader from '@/components/common/BlockPreloader.vue';
 import { mapActions, mapState } from 'vuex';
 
 export default {
@@ -129,12 +136,12 @@ export default {
     return {
       productAmount: 1,
       selectedColorId: 0,
-      selectedSize: '',
+      selectedSize: null,
       productAdded: false,
       productAddSending: false,
     };
   },
-  components: { BlockColors, BlockCounter },
+  components: { BlockColors, BlockCounter, BlockPreloader },
   computed: {
     ...mapState(['dataLoading']),
     ...mapState('products', ['productData']),
@@ -156,8 +163,13 @@ export default {
       this.productAddSending = true;
       this.addProductToCart({
         productId: this.productData.id,
-        amount: this.productAmount,
+        colorId: this.selectedColorId,
+        sizeId: this.selectedSize.id,
+        quantity: this.productAmount,
       })
+        .catch((e) => {
+          console.log(e);
+        })
         .then(() => {
           this.productAdded = true;
           this.productAddSending = false;

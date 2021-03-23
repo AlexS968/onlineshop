@@ -2,7 +2,7 @@
   <main class="content container">
     <div class="content__top">
 
-      <div class="content__row">
+      <div class="content__row" v-if="!dataLoading">
         <h1 class="content__title">
           Каталог
         </h1>
@@ -14,13 +14,14 @@
 
     <div class="content__catalog">
 
-      <ProductFilter :current-filters.sync="filters"/>
+      <ProductFilter v-if="!dataLoading" :current-filters.sync="filters"/>
 
       <section class="catalog">
 
-        <ProductList v-if="productsData" :product-list="productsData.items"/>
+        <ProductList v-if="productsData && !dataLoading" :product-list="productsData.items"/>
 
-        <BasePagination v-model="page" :count="countProducts" :per-page="productsPerPage"/>
+        <BasePagination v-if="!dataLoading" v-model="page"
+                        :count="countProducts" :per-page="productsPerPage"/>
 
       </section>
     </div>
@@ -52,6 +53,7 @@ export default {
   components: { ProductList, BasePagination, ProductFilter },
   computed: {
     ...mapState('products', ['productsData']),
+    ...mapState(['dataLoading']),
     countProducts() {
       return this.productsData ? this.productsData.pagination.total : [];
     },

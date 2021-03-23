@@ -1,5 +1,5 @@
 import axios from 'axios';
-import API_BASE_URL from '@/config';
+import Constants from '@/config';
 
 const state = () => ({
   colorsData: null,
@@ -10,36 +10,56 @@ const state = () => ({
 
 const actions = {
   async loadColors({ commit }) {
-    const response = await axios.get(`${API_BASE_URL}/api/colors`);
-    commit('loadColorsData', response.data);
+    try {
+      const response = await axios.get(`${Constants.API_BASE_URL}/api/colors`);
+      commit('loadColorsData', response.data);
+    } catch (e) {
+      commit('error/loadErrorData', e.response.data.error, { root: true });
+      commit('changeDataTransferError', true, { root: true });
+    }
   },
   async loadMaterials({ commit }) {
-    const response = await axios.get(`${API_BASE_URL}/api/materials`);
-    commit('loadMaterialsData', response.data);
+    try {
+      const response = await axios.get(`${Constants.API_BASE_URL}/api/materials`);
+      commit('loadMaterialsData', response.data);
+    } catch (e) {
+      commit('error/loadErrorData', e.response.data.error, { root: true });
+      commit('changeDataTransferError', true, { root: true });
+    }
   },
   async loadCategories({ commit }) {
-    const response = await axios.get(`${API_BASE_URL}/api/productCategories`);
-    commit('loadCategoriesData', response.data);
+    try {
+      const response = await axios.get(`${Constants.API_BASE_URL}/api/productCategories`);
+      commit('loadCategoriesData', response.data);
+    } catch (e) {
+      commit('error/loadErrorData', e.response.data.error, { root: true });
+      commit('changeDataTransferError', true, { root: true });
+    }
   },
   async loadSeasons({ commit }) {
-    const response = await axios.get(`${API_BASE_URL}/api/seasons`);
-    commit('loadSeasonData', response.data);
+    try {
+      const response = await axios.get(`${Constants.API_BASE_URL}/api/seasons`);
+      commit('loadSeasonData', response.data);
+    } catch (e) {
+      commit('error/loadErrorData', e.response.data.error, { root: true });
+      commit('changeDataTransferError', true, { root: true });
+    }
   },
 };
 
 const mutations = {
   /* eslint no-shadow: ["error", { "allow": ["state"] }] */
-  loadColorsData(state, colors) {
-    state.colorsData = colors;
+  loadColorsData(state, data) {
+    state.colorsData = data;
   },
-  loadMaterialsData(state, materials) {
-    state.materialsData = materials;
+  loadMaterialsData(state, data) {
+    state.materialsData = data;
   },
-  loadCategoriesData(state, categories) {
-    state.categoriesData = categories;
+  loadCategoriesData(state, data) {
+    state.categoriesData = data;
   },
-  loadSeasonData(state, season) {
-    state.seasonData = season;
+  loadSeasonData(state, data) {
+    state.seasonData = data;
   },
 };
 

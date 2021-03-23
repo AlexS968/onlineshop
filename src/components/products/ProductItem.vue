@@ -43,5 +43,8 @@ export default {
       return image(this.product, this.selectedColorId);
     },
   },
+  created() {
+    this.selectedColorId = this.product.colors[0].color.id;
+  },
 };
 </script>

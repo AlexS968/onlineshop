@@ -1,5 +1,5 @@
 import axios from 'axios';
-import API_BASE_URL from '@/config';
+import Constants from '@/config';
 
 const state = () => ({
   productsData: null,
@@ -11,9 +11,11 @@ const getters = {
 
 const actions = {
   async getProductList({ commit }, { filters, page, productsPerPage }) {
-    await new Promise((resolve) => { setTimeout(resolve, 500); });
+    commit('changeDataLoading', true, { root: true });
+    commit('changeDataTransferError', null, { root: true });
+    await new Promise((resolve) => { setTimeout(resolve, Constants.TIME_OUT); });
     try {
-      const response = await axios(`${API_BASE_URL}/api/products`, {
+      const response = await axios(`${Constants.API_BASE_URL}/api/products`, {
         params: {
           categoryId: filters.filterCategoryId,
           materialIds: filters.filterMaterialIds,
@@ -27,15 +29,18 @@ const actions = {
       });
       const data = await response.data;
       commit('setProductsData', data);
+      commit('changeDataLoading', false, { root: true });
     } catch (e) {
-      console.log(e);
+      commit('changeDataLoading', false, { root: true });
+      commit('changeDataTransferError', null, { root: true });
+      throw e;
     }
   },
   async loadProductData({ commit }, id) {
     commit('changeDataLoading', true, { root: true });
-    await new Promise((resolve) => { setTimeout(resolve, 500); });
+    await new Promise((resolve) => { setTimeout(resolve, Constants.TIME_OUT); });
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/products/${id}`);
+      const response = await axios.get(`${Constants.API_BASE_URL}/api/products/${id}`);
       commit('setProductData', response.data);
       commit('changeDataLoading', false, { root: true });
     } catch (e) {
@@ -45,7 +50,6 @@ const actions = {
   },
 };
 
-// mutations
 const mutations = {
   // eslint-disable-next-line no-shadow
   setProductsData(state, data) {

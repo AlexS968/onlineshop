@@ -17,7 +17,7 @@
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select" v-if="categoriesData">
-          <select class="form__select" type="text" name="category"
+          <select class="form__select" name="category"
                   v-model.number="filters.categoryId">
             <option value="0">Все категории</option>
             <option :value="category.id" v-for="category in categoriesData.items"
@@ -68,7 +68,8 @@
       <button class="filter__submit button button--primery" type="submit">
         Применить
       </button>
-      <button class="filter__reset button button--second" type="button" @click.prevent="reset">
+      <button class="filter__reset button button--second" type="button"
+              v-if="!filterIsEmpty" @click.prevent="reset">
         Сбросить
       </button>
     </form>
@@ -96,13 +97,18 @@ export default {
   components: { BlockColors },
   computed: {
     ...mapState('filters', ['categoriesData', 'materialsData', 'colorsData', 'seasonData']),
+    filterIsEmpty() {
+      return this.filters.categoryId === 0 && this.filters.minPrice === 0
+        && this.filters.maxPrice === 0 && this.filters.materialIds.length === 0
+        && this.filters.seasonIds.length === 0 && this.filters.colorIds.length === 0;
+    },
   },
   methods: {
     ...mapActions('filters', ['loadCategories', 'loadMaterials', 'loadColors', 'loadSeasons']),
     submit() {
       this.$emit('update:currentFilters', {
-        filterPriceFrom: this.filters.minPrice,
-        filterPriceTo: this.filters.maxPrice,
+        filterMinPrice: this.filters.minPrice,
+        filterMaxPrice: this.filters.maxPrice,
         filterCategoryId: this.filters.categoryId,
         filterMaterialIds: this.filters.materialIds,
         filterColorIds: this.filters.colorIds,

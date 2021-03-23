@@ -2,6 +2,9 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import products from '@/store/modules/products';
 import filters from '@/store/modules/filters';
+import cart from '@/store/modules/cart';
+import order from '@/store/modules/order';
+import error from '@/store/modules/error';
 
 Vue.use(Vuex);
 
@@ -32,5 +35,8 @@ export default new Vuex.Store({
   modules: {
     products,
     filters,
+    cart,
+    order,
+    error,
   },
 });
