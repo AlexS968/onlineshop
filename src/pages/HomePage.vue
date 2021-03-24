@@ -17,14 +17,13 @@
       <ProductFilter v-if="!dataLoading" :current-filters.sync="filters"/>
 
       <section class="catalog">
-
         <ProductList v-if="productsData && !dataLoading" :product-list="productsData.items"/>
-
-        <BasePagination v-if="!dataLoading" v-model="page"
-                        :count="countProducts" :per-page="productsPerPage"/>
-
       </section>
+
     </div>
+
+    <BasePagination v-if="!dataLoading" v-model="page"
+                    :count="countProducts" :per-page.sync="productsPerPage"/>
   </main>
 </template>
 
@@ -61,12 +60,19 @@ export default {
       return `${this.countProducts} ${enumerate(this.countProducts,
         ['товар', 'товара', 'товаров'])}`;
     },
+    changedData() {
+      const { filters, productsPerPage } = this;
+      return {
+        filters,
+        productsPerPage,
+      };
+    },
   },
   methods: {
     ...mapActions('products', ['getProductList']),
   },
   watch: {
-    filters: {
+    changedData: {
       handler() {
         this.getProductList({
           filters: this.filters,

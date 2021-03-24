@@ -4,13 +4,15 @@
     <ErrorPopup v-if="dataTransferError" @closeErrPopup="closeErrPopup">
       <div>
         Уважаемый пользователь,<br>
-        при загрузке данных произошла<br>
-        {{ errorData.message }}<br>
+        при загрузке данных произошла ошибка<br>
+        {{ getMessage }}<br>
         Просьба обратиться в техподдержку.
         <br>
       </div>
     </ErrorPopup>
-    <div v-if="dataLoading">Загрузка товара...<BlockPreloader class="preloader big"/></div>
+    <div v-if="dataLoading">Загрузка товара...
+      <BlockPreloader class="preloader big"/>
+    </div>
     <router-view/>
     <BaseFooter/>
   </div>
@@ -21,15 +23,21 @@ import BaseHeader from '@/components/base/BaseHeader.vue';
 import BaseFooter from '@/components/base/BaseFooter.vue';
 import BlockPreloader from '@/components/common/BlockPreloader.vue';
 import ErrorPopup from '@/components/errors/ErrorPopup.vue';
-import { mapState, mapActions, mapMutations } from 'vuex';
+import {
+  mapState, mapActions, mapMutations, mapGetters,
+} from 'vuex';
 
 export default {
   components: {
-    BaseHeader, BaseFooter, BlockPreloader, ErrorPopup,
+    BaseHeader,
+    BaseFooter,
+    BlockPreloader,
+    ErrorPopup,
   },
   computed: {
     ...mapState(['dataLoading', 'dataTransferError']),
     ...mapState('error', ['errorData']),
+    ...mapGetters('error', ['getMessage']),
   },
   methods: {
     ...mapActions('cart', ['loadCartProducts']),
@@ -46,6 +54,15 @@ export default {
     }
 
     this.loadCartProducts();
+  },
+  watch: {
+    errorData: {
+      handler() {
+        this.$store.commit('changeDataTransferError', true, { root: true });
+      },
+      immediate: true,
+      deep: true,
+    },
   },
 };
 </script>

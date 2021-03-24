@@ -35,34 +35,14 @@
 
       <fieldset class="form__block">
         <legend class="form__legend">Материал</legend>
-        <ul class="check-list" v-if="materialsData">
-          <li class="check-list__item" v-for="material in materialsData.items" :key="material.id">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox"
-                     name="material" :value="material.id" v-model.number="filters.materialIds">
-              <span class="check-list__desc">
-                    {{ material.title }}
-                    <span>({{ material.productsCount }})</span>
-                  </span>
-            </label>
-          </li>
-        </ul>
+        <BlockProperties v-if="materialsData" :data="materialsData"
+                         :property-ids.sync="filters.materialIds"/>
       </fieldset>
 
       <fieldset class="form__block">
         <legend class="form__legend">Коллекция</legend>
-        <ul class="check-list" v-if="seasonData">
-          <li class="check-list__item" v-for="season in seasonData.items" :key="season.id">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox"
-                     name="collection" :value="season.id" v-model.number="filters.seasonIds">
-              <span class="check-list__desc">
-                    {{ season.title }}
-                    <span>({{ season.productsCount }})</span>
-                  </span>
-            </label>
-          </li>
-        </ul>
+        <BlockProperties v-if="seasonData" :data="seasonData"
+                         :property-ids.sync="filters.seasonIds"/>
       </fieldset>
 
       <button class="filter__submit button button--primery" type="submit">
@@ -79,6 +59,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import BlockColors from '@/components/common/BlockColors.vue';
+import BlockProperties from '@/components/common/BlockProperties.vue';
 
 export default {
   data() {
@@ -94,7 +75,7 @@ export default {
     };
   },
   props: ['currentFilters'],
-  components: { BlockColors },
+  components: { BlockColors, BlockProperties },
   computed: {
     ...mapState('filters', ['categoriesData', 'materialsData', 'colorsData', 'seasonData']),
     filterIsEmpty() {

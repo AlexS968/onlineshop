@@ -10,9 +10,12 @@
       </router-link>
     </h3>
 
-    <span class="catalog__price">
-              {{ product.price | numberFormat }} ₽
-            </span>
+    <div class="inline">
+      <span class="catalog__price">{{ product.price | numberFormat }} ₽</span>
+    </div>
+    <div class="inline right">
+      <button class="button--primery" @click.prevent="addToCart">В корзину</button>
+    </div>
 
     <BlockColors type="radio" :colors="colors" :selected-color-id.sync="selectedColorId"/>
 
@@ -23,6 +26,7 @@
 import numberFormat from '@/helpers/numberFormat';
 import image from '@/helpers/image';
 import BlockColors from '@/components/common/BlockColors.vue';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   data() {
@@ -36,6 +40,7 @@ export default {
     numberFormat,
   },
   computed: {
+    ...mapState('products', ['productData']),
     colors() {
       return this.product.colors ? this.product.colors.map((obj) => obj.color) : [];
     },
@@ -43,8 +48,38 @@ export default {
       return image(this.product, this.selectedColorId);
     },
   },
+  methods: {
+    ...mapActions('cart', ['addProductToCart']),
+    ...mapActions('products', ['loadProductData']),
+    ...mapActions('error', ['loadErrorData']),
+    async addToCart() {
+      try {
+        await this.loadProductData(this.product.id);
+        await this.addProductToCart({
+          productId: this.product.id,
+          colorId: this.product.colors[0].color.id,
+          sizeId: this.productData.sizes[0].id,
+          quantity: 1,
+        });
+      } catch (e) {
+        console.log(e.response.data.error);
+        this.loadErrorData(e.response.data.error);
+      }
+    },
+  },
   created() {
     this.selectedColorId = this.product.colors[0].color.id;
   },
 };
 </script>
+
+<style lang="stylus">
+.inline {
+  display inline-flex
+}
+
+.right {
+  padding-left 130px
+}
+
+</style>
