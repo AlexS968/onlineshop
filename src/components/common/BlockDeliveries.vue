@@ -5,7 +5,7 @@
         <input class="options__radio sr-only" type="radio"
                :value="delivery.id" v-model="computedDeliveryTypeId">
         <span class="options__value">
-                    {{ delivery.title }} <b>{{ delivery.price | numberFormat }} ₽</b>
+                    {{ delivery.title }} <b>{{ delivery.price | setNumberFormat }} ₽</b>
                   </span>
       </label>
     </li>
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import numberFormat from '@/helpers/numberFormat';
+import setNumberFormat from '@/helpers/setNumberFormat';
 
 export default {
   props: ['deliveriesData', 'deliveryTypeId'],
@@ -28,7 +28,7 @@ export default {
     },
   },
   filters: {
-    numberFormat,
+    setNumberFormat,
   },
   created() {
     this.$emit('update:deliveryTypeId', 1);

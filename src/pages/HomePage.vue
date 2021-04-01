@@ -1,8 +1,8 @@
 <template>
-  <main class="content container">
+  <main class="content container" v-if="!dataLoading">
     <div class="content__top">
 
-      <div class="content__row" v-if="!dataLoading">
+      <div class="content__row">
         <h1 class="content__title">
           Каталог
         </h1>
@@ -14,21 +14,22 @@
 
     <div class="content__catalog">
 
-      <ProductFilter v-if="!dataLoading" :current-filters.sync="filters"/>
+      <ProductFilter :current-filters.sync="filters"/>
 
       <section class="catalog">
-        <ProductList v-if="productsData && !dataLoading" :product-list="productsData.items"/>
+        <ProductList v-if="productsData" :product-list="productsData.items"/>
       </section>
 
     </div>
 
-    <BasePagination v-if="!dataLoading" v-model="page"
+    <BasePagination v-model="page"
                     :count="countProducts" :per-page.sync="productsPerPage"/>
   </main>
 </template>
 
 <script>
 import enumerate from '@/helpers/enumerate';
+import Constants from '@/config';
 import ProductList from '@/components/products/ProductList.vue';
 import BasePagination from '@/components/base/BasePagination.vue';
 import ProductFilter from '@/components/products/ProductFilter.vue';
@@ -37,14 +38,7 @@ import { mapActions, mapState } from 'vuex';
 export default {
   data() {
     return {
-      filters: {
-        filterCategoryId: 0,
-        filterMaterialIds: [],
-        filterSeasonIds: [],
-        filterColorIds: [],
-        filterMinPrice: 0,
-        filterMaxPrice: 0,
-      },
+      filters: Constants.FILTERS,
       page: 1,
       productsPerPage: 12,
     };

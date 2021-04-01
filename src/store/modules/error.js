@@ -13,6 +13,9 @@ const getters = {
         || state.errorData.request.sizeId
         || state.errorData.request.productId);
     }
+    if (state.errorData.status) {
+      return `${state.errorData.status} ${state.errorData.statusText}`;
+    }
     return '';
   },
 };
@@ -28,6 +31,7 @@ const mutations = {
   // eslint-disable-next-line no-shadow
   loadErrorData(state, data) {
     state.errorData = data;
+    console.log(state.errorData);
   },
 };
 

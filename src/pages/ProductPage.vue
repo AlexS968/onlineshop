@@ -21,7 +21,9 @@
     </div>
 
     <section class="item">
-      <div v-if="productAddSending"><BlockPreloader class="preloader big"/></div>
+      <div v-if="productAddSending">
+        <BlockPreloader class="preloader big"/>
+      </div>
       <div class="item__pics pics" v-else>
         <div class="pics__wrapper">
           <img width="570" height="570" :src="computedImage"
@@ -48,7 +50,7 @@
               <BlockCounter :amount.sync="productAmount"/>
 
               <b class="item__price">
-                {{ productData.price * productAmount | numberFormat }} ₽
+                {{ productData.price * productAmount | setNumberFormat }} ₽
               </b>
             </div>
 
@@ -123,9 +125,9 @@
 </template>
 
 <script>
-import numberFormat from '@/helpers/numberFormat';
-import image from '@/helpers/image';
-import imageList from '@/helpers/imageList';
+import setNumberFormat from '@/helpers/setNumberFormat';
+import getImage from '@/helpers/getImage';
+import getImageList from '@/helpers/getImageList';
 import BlockColors from '@/components/common/BlockColors.vue';
 import BlockCounter from '@/components/common/BlockCounter.vue';
 import BlockPreloader from '@/components/common/BlockPreloader.vue';
@@ -141,7 +143,11 @@ export default {
       productAddSending: false,
     };
   },
-  components: { BlockColors, BlockCounter, BlockPreloader },
+  components: {
+    BlockColors,
+    BlockCounter,
+    BlockPreloader,
+  },
   computed: {
     ...mapState(['dataLoading']),
     ...mapState('products', ['productData']),
@@ -149,10 +155,10 @@ export default {
       return this.productData.colors ? this.productData.colors.map((obj) => obj.color) : [];
     },
     computedImage() {
-      return image(this.productData, this.selectedColorId);
+      return getImage(this.productData, this.selectedColorId);
     },
     computedImageList() {
-      return imageList(this.productData, this.selectedColorId);
+      return getImageList(this.productData, this.selectedColorId);
     },
   },
   methods: {
@@ -177,19 +183,15 @@ export default {
     },
   },
   filters: {
-    numberFormat,
+    setNumberFormat,
   },
   watch: {
     '$route.params.id': {
-      handler() {
-        this.loadProductData(this.$route.params.id);
-      },
-      immediate: true,
-    },
-    productData: {
-      handler() {
+      async handler() {
+        await this.loadProductData(this.$route.params.id);
         this.selectedColorId = this.colors[0].id;
       },
+      immediate: true,
     },
   },
 };

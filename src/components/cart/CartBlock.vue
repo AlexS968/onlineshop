@@ -3,19 +3,19 @@
     <ul class="cart__orders">
       <li class="cart__order" v-for="item in cartBlockData.productsDetail" :key="item.productId">
         <h3>{{ item.product.title }}</h3>
-        <b>{{ item.totalPrice | numberFormat }} ₽</b>
+        <b>{{ item.totalPrice | setNumberFormat }} ₽</b>
         <span>Артикул: {{ item.product.id }}</span>
       </li>
     </ul>
 
     <div class="cart__total">
       <p>Доставка:
-        <b v-if="cartBlockData.deliveryPrice">{{ cartBlockData.deliveryPrice | numberFormat }}
+        <b v-if="cartBlockData.deliveryPrice">{{ cartBlockData.deliveryPrice | setNumberFormat }}
           ₽</b>
         <b v-else>Выберите доставку</b>
       </p>
       <p>Итого: <b>{{ productsNumber }}</b> товара на сумму
-        <b>{{ totalSum | numberFormat }} ₽</b></p>
+        <b>{{ totalSum | setNumberFormat }} ₽</b></p>
     </div>
 
     <button class="cart__button button button--primery" v-if="cartBlockData.showButton"
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import numberFormat from '@/helpers/numberFormat';
+import setNumberFormat from '@/helpers/setNumberFormat';
 import enumerate from '@/helpers/enumerate';
 
 export default {
@@ -42,7 +42,7 @@ export default {
     },
   },
   filters: {
-    numberFormat,
+    setNumberFormat,
   },
 };
 </script>

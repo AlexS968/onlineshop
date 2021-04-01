@@ -47,18 +47,18 @@
 </template>
 
 <script>
+import Constants from '@/config';
+
 export default {
-  data() {
-    return {
-      paginationList: [9, 18, 27],
-    };
-  },
   model: {
     prop: 'page',
     event: 'paginate',
   },
   props: ['page', 'count', 'perPage'],
   computed: {
+    paginationList() {
+      return Constants.PAGINATION_LIST;
+    },
     pages() {
       return Math.ceil(this.count / this.perPage);
     },

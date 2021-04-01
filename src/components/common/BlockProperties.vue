@@ -3,7 +3,7 @@
     <li class="check-list__item" v-for="element in data.items" :key="element.id">
       <label class="check-list__label">
         <input class="check-list__check sr-only" type="checkbox"
-               name="material" :value="element.id" v-model.number="idList">
+               name="material" :value="element.id" v-model.number="idL">
         <span class="check-list__desc">
                     {{ element.title }}
                     <span>({{ element.productsCount }})</span>
@@ -15,15 +15,15 @@
 
 <script>
 export default {
-  data() {
-    return {
-      idList: [],
-    };
-  },
   props: ['data', 'propertyIds'],
-  watch: {
-    idList(value) {
-      this.$emit('update:propertyIds', value);
+  computed: {
+    idL: {
+      get() {
+        return this.propertyIds;
+      },
+      set(value) {
+        this.$emit('update:propertyIds', value);
+      },
     },
   },
 };

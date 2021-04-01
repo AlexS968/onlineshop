@@ -1,17 +1,18 @@
 <template>
   <div>
     <BaseHeader/>
-    <ErrorPopup v-if="dataTransferError" @closeErrPopup="closeErrPopup">
-      <div>
+    <ErrorPopup v-if="dataTransferError && errorData" @closeErrPopup="closeErrPopup">
+      <div><br>
         Уважаемый пользователь,<br>
-        при загрузке данных произошла ошибка<br>
-        {{ getMessage }}<br>
-        Просьба обратиться в техподдержку.
+        при загрузке данных произошла ошибка<br><br>
+        <h3>{{ getMessage }}</h3><br>
+        Просьба обратиться в техподдержку.<br>
         <br>
       </div>
     </ErrorPopup>
-    <div v-if="dataLoading">Загрузка товара...
-      <BlockPreloader class="preloader big"/>
+    <div v-if="dataLoading">
+      <div><BlockPreloader class="preloader big"/></div>
+      <div class="container">Данные загружаются...</div>
     </div>
     <router-view/>
     <BaseFooter/>

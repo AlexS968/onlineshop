@@ -22,7 +22,8 @@
             <option value="0">Все категории</option>
             <option :value="category.id" v-for="category in categoriesData.items"
                     :key="category.id">
-              {{ category.title }}</option>
+              {{ category.title }}
+            </option>
           </select>
         </label>
       </fieldset>
@@ -58,64 +59,47 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import Constants from '@/config';
 import BlockColors from '@/components/common/BlockColors.vue';
 import BlockProperties from '@/components/common/BlockProperties.vue';
 
 export default {
   data() {
     return {
-      filters: {
-        categoryId: 0,
-        materialIds: [],
-        seasonIds: [],
-        colorIds: [],
-        minPrice: 0,
-        maxPrice: 0,
-      },
+      filters: Constants.FILTERS,
     };
   },
   props: ['currentFilters'],
-  components: { BlockColors, BlockProperties },
+  components: {
+    BlockColors,
+    BlockProperties,
+  },
   computed: {
     ...mapState('filters', ['categoriesData', 'materialsData', 'colorsData', 'seasonData']),
     filterIsEmpty() {
-      return this.filters.categoryId === 0 && this.filters.minPrice === 0
-        && this.filters.maxPrice === 0 && this.filters.materialIds.length === 0
-        && this.filters.seasonIds.length === 0 && this.filters.colorIds.length === 0;
+      return Object.values(this.filters)
+        .map((v) => {
+          if (Array.isArray(v)) {
+            return Object.values(v).length;
+          }
+          return v;
+        })
+        .every((el) => el === 0);
     },
   },
   methods: {
     ...mapActions('filters', ['loadCategories', 'loadMaterials', 'loadColors', 'loadSeasons']),
     submit() {
-      this.$emit('update:currentFilters', {
-        filterMinPrice: this.filters.minPrice,
-        filterMaxPrice: this.filters.maxPrice,
-        filterCategoryId: this.filters.categoryId,
-        filterMaterialIds: this.filters.materialIds,
-        filterColorIds: this.filters.colorIds,
-        filterSeasonIds: this.filters.seasonIds,
-      });
+      this.$emit('update:currentFilters', this.filters);
     },
     reset() {
-      this.$emit('update:currentFilters', {
-        filterPriceFrom: 0,
-        filterPriceTo: 0,
-        filterCategoryId: 0,
-        filterMaterialIds: [],
-        filterColorIds: [],
-        filterSeasonIds: [],
-      });
+      this.$emit('update:currentFilters', Constants.FILTERS);
     },
   },
   watch: {
     currentFilters: {
       handler(value) {
-        this.filters.minPrice = value.filterMinPrice;
-        this.filters.maxPrice = value.filterMaxPrice;
-        this.filters.categoryId = value.filterCategoryId;
-        this.filters.materialIds = value.filterMaterialIds;
-        this.filters.colorIds = value.filterColorIds;
-        this.filters.seasonIds = value.filterSeasonIds;
+        this.filters = { ...value };
       },
       deep: true,
       immediate: true,

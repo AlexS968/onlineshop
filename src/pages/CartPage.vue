@@ -1,5 +1,5 @@
 <template>
-  <main class="content container">
+  <main class="content container" v-if="!dataLoading">
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
@@ -26,9 +26,9 @@
 
     <section class="cart">
       <form class="cart__form form" action="#" method="POST">
-        <div class="cart__field">
+        <div class="cart__field" v-if="cartProducts">
           <ul class="cart__list">
-            <CartItem v-for="item in cartProductsData" :key="item.productId" :item="item"/>
+            <CartItem v-for="item in cartProducts" :key="item.basketItemId" :item="item"/>
           </ul>
         </div>
 
@@ -37,7 +37,7 @@
             Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе
           </p>
           <p class="cart__price">
-            Итого: <span>{{ cartTotalPrice | numberFormat }} ₽</span>
+            Итого: <span>{{ cartTotalPrice | setNumberFormat }} ₽</span>
           </p>
 
           <router-link class="cart__button button button--primery" tag="button"
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import numberFormat from '@/helpers/numberFormat';
+import setNumberFormat from '@/helpers/setNumberFormat';
 import CartItem from '@/components/cart/CartItem.vue';
 import { mapGetters, mapState } from 'vuex';
 import enumerate from '@/helpers/enumerate';
@@ -59,11 +59,11 @@ import enumerate from '@/helpers/enumerate';
 export default {
   components: { CartItem },
   filters: {
-    numberFormat,
+    setNumberFormat,
   },
   computed: {
     ...mapGetters('cart', ['cartTotalPrice', 'cartTotalAmount']),
-    ...mapState('cart', ['cartProductsData']),
+    ...mapState('cart', ['cartProducts']),
     ...mapState(['dataLoading', 'dataTransferError']),
     productsNumber() {
       return `${this.cartTotalAmount} ${enumerate(this.cartTotalAmount,

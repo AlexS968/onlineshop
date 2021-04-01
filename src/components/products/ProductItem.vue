@@ -11,7 +11,7 @@
     </h3>
 
     <div class="inline">
-      <span class="catalog__price">{{ product.price | numberFormat }} ₽</span>
+      <span class="catalog__price">{{ product.price | setNumberFormat }} ₽</span>
     </div>
     <div class="inline right">
       <button class="button--primery" @click.prevent="addToCart">В корзину</button>
@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import numberFormat from '@/helpers/numberFormat';
-import image from '@/helpers/image';
+import setNumberFormat from '@/helpers/setNumberFormat';
+import getImage from '@/helpers/getImage';
 import BlockColors from '@/components/common/BlockColors.vue';
 import { mapState, mapActions } from 'vuex';
 
@@ -37,7 +37,7 @@ export default {
   props: ['product'],
   components: { BlockColors },
   filters: {
-    numberFormat,
+    setNumberFormat,
   },
   computed: {
     ...mapState('products', ['productData']),
@@ -45,7 +45,7 @@ export default {
       return this.product.colors ? this.product.colors.map((obj) => obj.color) : [];
     },
     computedImage() {
-      return image(this.product, this.selectedColorId);
+      return getImage(this.product, this.selectedColorId);
     },
   },
   methods: {

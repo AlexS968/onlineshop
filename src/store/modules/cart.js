@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Constants from '@/config';
 
 const state = () => ({
@@ -18,99 +17,179 @@ const getters = {
     });
   },
   cartTotalPrice(state) {
-    return state.cartProductsData
+    return state.cartProducts
       .reduce((acc, item) => (item.price * item.quantity) + acc, 0);
   },
   cartTotalAmount(state) {
-    return state.cartProductsData
+    return state.cartProducts
       .reduce((acc, item) => item.quantity + acc, 0);
   },
 };
 
 const actions = {
   async loadCartProducts({ state, commit, rootGetters }) {
+    const url = new URL(`${Constants.API_BASE_URL}/api/baskets`);
+    const params = [['userAccessKey', rootGetters.getUserAccessKey]];
+    url.search = new URLSearchParams(params).toString();
+
     commit('changeDataLoading', true, { root: true });
-    commit('changeDataTransferError', null, { root: true });
     await new Promise((resolve) => { setTimeout(resolve, Constants.TIME_OUT); });
+
     try {
-      const response = await axios.get(`${Constants.API_BASE_URL}/api/baskets`, {
-        params: { userAccessKey: rootGetters.getUserAccessKey },
-      });
-      if (!state.userAccessKey) {
-        localStorage.setItem('userAccessKey', response.data.user.accessKey);
-        commit('updateUserAccessKey', response.data.user.accessKey, { root: true });
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        if (!state.userAccessKey) {
+          localStorage.setItem('userAccessKey', data.user.accessKey);
+          commit('updateUserAccessKey', data.user.accessKey, { root: true });
+        }
+        commit('updateCartProductsData', data.items);
+        commit('syncCartProducts');
+      } else {
+        commit('error/loadErrorData', response, { root: true });
+        commit('changeDataTransferError', true, { root: true });
       }
-      commit('updateCartProductsData', response.data.items);
-      commit('syncCartProducts');
       commit('changeDataLoading', false, { root: true });
     } catch (e) {
       commit('changeDataLoading', false, { root: true });
-      commit('changeDataTransferError', null, { root: true });
+      commit('error/loadErrorData', e, { root: true });
+      commit('changeDataTransferError', true, { root: true });
       throw e;
     }
   },
   async addProductToCart({ commit, rootGetters }, {
-    productId, colorId, sizeId, quantity,
+    productId,
+    colorId,
+    sizeId,
+    quantity,
   }) {
+    const url = new URL(`${Constants.API_BASE_URL}/api/baskets/products`);
+    const params = [['userAccessKey', rootGetters.getUserAccessKey]];
+    url.search = new URLSearchParams(params).toString();
+
     await new Promise((resolve) => { setTimeout(resolve, Constants.TIME_OUT); });
-    const response = await axios.post(`${Constants.API_BASE_URL}/api/baskets/products`, {
-      productId,
-      colorId,
-      sizeId,
-      quantity,
-    }, {
-      params: { userAccessKey: rootGetters.getUserAccessKey },
-    });
-    commit('updateCartProductsData', response.data.items);
-    commit('syncCartProducts');
-  },
-  async changeCartProductAmount({ commit, rootGetters }, { productId, basketItemId, quantity }) {
-    commit('updateCartProductAmount', { productId, quantity });
     try {
-      const response = await axios.put(`${Constants.API_BASE_URL}/api/baskets/products`, {
-        basketItemId,
-        quantity,
-      }, {
-        params: { userAccessKey: rootGetters.getUserAccessKey },
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId,
+          colorId,
+          sizeId,
+          quantity,
+        }),
       });
-      commit('updateCartProductsData', response.data.items);
+      if (response.ok) {
+        const data = await response.json();
+        commit('updateCartProductsData', data.items);
+        commit('syncCartProducts');
+      } else {
+        commit('error/loadErrorData', response, { root: true });
+        commit('changeDataTransferError', true, { root: true });
+      }
+    } catch (e) {
+      commit('error/loadErrorData', e, { root: true });
+      commit('changeDataTransferError', true, { root: true });
+      throw e;
+    }
+  },
+  async changeCartProductAmount({ commit, rootGetters }, {
+    basketItemId,
+    quantity,
+  }) {
+    commit('updateCartProductAmount', { basketItemId, quantity });
+    const url = new URL(`${Constants.API_BASE_URL}/api/baskets/products`);
+    const params = [['userAccessKey', rootGetters.getUserAccessKey]];
+    url.search = new URLSearchParams(params).toString();
+
+    await new Promise((resolve) => { setTimeout(resolve, Constants.TIME_OUT); });
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          basketItemId,
+          quantity,
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        commit('updateCartProductsData', data.items);
+      } else {
+        commit('syncCartProducts');
+        commit('error/loadErrorData', response, { root: true });
+        commit('changeDataTransferError', true, { root: true });
+      }
     } catch (e) {
       commit('syncCartProducts');
+      commit('error/loadErrorData', e, { root: true });
+      commit('changeDataTransferError', true, { root: true });
       throw e;
     }
   },
   async deleteCartProduct({ commit, rootGetters }, basketItemId) {
-    const response = await axios.delete(`${Constants.API_BASE_URL}/api/baskets/products`,
-      {
-        params: { userAccessKey: rootGetters.getUserAccessKey },
-        data: { basketItemId },
+    commit('deleteCartProduct', basketItemId);
+    const url = new URL(`${Constants.API_BASE_URL}/api/baskets/products`);
+    const params = [['userAccessKey', rootGetters.getUserAccessKey]];
+    url.search = new URLSearchParams(params).toString();
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, Constants.TIME_OUT);
+    });
+    try {
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ basketItemId }),
       });
-    commit('updateCartProductsData', response.data.items);
-    commit('syncCartProducts');
+      if (response.ok) {
+        const data = await response.json();
+        commit('updateCartProductsData', data.items);
+      } else {
+        commit('syncCartProducts');
+        commit('error/loadErrorData', response, { root: true });
+        commit('changeDataTransferError', true, { root: true });
+      }
+    } catch (e) {
+      commit('syncCartProducts');
+      commit('error/loadErrorData', e, { root: true });
+      commit('changeDataTransferError', true, { root: true });
+      throw e;
+    }
   },
 };
 
 const mutations = {
-  updateCartProductAmount(state, { productId, amount }) {
+  updateCartProductAmount(state, {
+    basketItemId,
+    quantity,
+  }) {
     const item = state.cartProducts
-      .find((i) => i.productId === productId);
+      .find((i) => i.basketItemId === basketItemId);
     if (item) {
-      item.amount = amount;
+      item.quantity = quantity;
     }
-  },
-  deleteCartProduct(state, productId) {
-    state.cartProducts = state.cartProducts
-      .filter((item) => item.productId !== productId);
   },
   updateCartProductsData(state, items) {
     state.cartProductsData = items;
+  },
+  deleteCartProduct(state, basketItemId) {
+    state.cartProducts = state.cartProducts
+      .filter((item) => item.basketItemId !== basketItemId);
   },
   syncCartProducts(state) {
     // eslint-disable-next-line
     state.cartProducts = state.cartProductsData.map((item) => {
       return {
-        productId: item.product.id,
-        amount: item.quantity,
+        basketItemId: item.id,
+        quantity: item.quantity,
+        price: item.price,
+        color: { color: item.color.color },
+        product: {
+          colors: item.product.colors,
+          id: item.product.id,
+          title: item.product.title,
+        },
       };
     });
   },

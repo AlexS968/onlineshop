@@ -72,7 +72,7 @@ import CartBlock from '@/components/cart/CartBlock.vue';
 import BlockDeliveries from '@/components/common/BlockDeliveries.vue';
 import BlockPayments from '@/components/common/BlockPayments.vue';
 import { mapGetters, mapState, mapActions } from 'vuex';
-import numberFormat from '@/helpers/numberFormat';
+import setNumberFormat from '@/helpers/setNumberFormat';
 import enumerate from '@/helpers/enumerate';
 
 export default {
@@ -87,7 +87,7 @@ export default {
     };
   },
   filters: {
-    numberFormat,
+    numberFormat: setNumberFormat,
   },
   computed: {
     ...mapGetters('cart', ['cartDetailProducts', 'cartTotalPrice', 'cartTotalAmount']),
@@ -99,8 +99,9 @@ export default {
     },
     computedDeliveryPrice() {
       return this.deliveriesData
-        .filter((delivery) => delivery.id === this.orderData.deliveryTypeId)
-        .map((delivery) => delivery.price)[0];
+        ? this.deliveriesData
+          .filter((delivery) => delivery.id === this.orderData.deliveryTypeId)
+          .map((delivery) => delivery.price)[0] : 0;
     },
     cartBlockData() {
       return {
@@ -120,12 +121,13 @@ export default {
     ...mapActions('order', ['loadDeliveries', 'loadPayments', 'makeOrder']),
     toOrder() {
       this.makeOrder(this.orderData)
-        .then((response) => {
-          this.$router.push({ name: 'orderInfo', params: { id: response.data.id } });
-        })
-        .catch((e) => {
-          this.orderError = e.response.data.error.request || {};
-          this.orderErrorMessage = e.response.data.error.message;
+        .then((data) => {
+          if (data.error) {
+            this.orderError = data.error.request || {};
+            this.orderErrorMessage = data.error.message;
+          } else {
+            this.$router.push({ name: 'orderInfo', params: { id: data.id } });
+          }
         });
     },
   },

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Constants from '@/config';
 
 const state = () => ({
@@ -11,28 +10,35 @@ const getters = {
 
 const actions = {
   async getProductList({ commit }, { filters, page, productsPerPage }) {
+    const url = new URL(`${Constants.API_BASE_URL}/api/products`);
+    const params = [
+      ['categoryId', filters.categoryId],
+      ['materialIds[]', filters.materialIds],
+      ['seasonIds[]', filters.seasonIds],
+      ['colorIds[]', filters.colorIds],
+      ['page', page],
+      ['limit', productsPerPage],
+      ['minPrice', filters.minPrice],
+      ['maxPrice', filters.maxPrice],
+    ];
+    url.search = new URLSearchParams(params).toString();
+
     commit('changeDataLoading', true, { root: true });
-    commit('changeDataTransferError', null, { root: true });
     await new Promise((resolve) => { setTimeout(resolve, Constants.TIME_OUT); });
     try {
-      const response = await axios(`${Constants.API_BASE_URL}/api/products`, {
-        params: {
-          categoryId: filters.filterCategoryId,
-          materialIds: filters.filterMaterialIds,
-          seasonIds: filters.filterSeasonIds,
-          colorIds: filters.filterColorIds,
-          page,
-          limit: productsPerPage,
-          minPrice: filters.filterMinPrice,
-          maxPrice: filters.filterMaxPrice,
-        },
-      });
-      const data = await response.data;
-      commit('setProductsData', data);
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        commit('setProductsData', data);
+      } else {
+        commit('error/loadErrorData', response, { root: true });
+        commit('changeDataTransferError', true, { root: true });
+      }
       commit('changeDataLoading', false, { root: true });
     } catch (e) {
       commit('changeDataLoading', false, { root: true });
-      commit('changeDataTransferError', null, { root: true });
+      commit('error/loadErrorData', e, { root: true });
+      commit('changeDataTransferError', true, { root: true });
       throw e;
     }
   },
@@ -40,11 +46,19 @@ const actions = {
     commit('changeDataLoading', true, { root: true });
     await new Promise((resolve) => { setTimeout(resolve, Constants.TIME_OUT); });
     try {
-      const response = await axios.get(`${Constants.API_BASE_URL}/api/products/${id}`);
-      commit('setProductData', response.data);
+      const response = await fetch(`${Constants.API_BASE_URL}/api/products/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        commit('setProductData', data);
+      } else {
+        commit('error/loadErrorData', response, { root: true });
+        commit('changeDataTransferError', true, { root: true });
+      }
       commit('changeDataLoading', false, { root: true });
     } catch (e) {
-      await this.$router.replace({ name: 'notFound' });
+      commit('changeDataLoading', false, { root: true });
+      commit('error/loadErrorData', e, { root: true });
+      commit('changeDataTransferError', true, { root: true });
       throw e;
     }
   },

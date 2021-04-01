@@ -1,7 +1,7 @@
 <template>
   <li class="cart__item product">
     <div class="product__pic">
-      <img :src="image.url" width="120" height="120" :alt="image.name">
+      <img :src="computedImage" width="120" height="120">
     </div>
     <h3 class="product__title">
       <router-link :to="{name:'product', params:{id:item.product.id}}">
@@ -22,12 +22,12 @@
     <BlockCounter class="product__counter" :amount.sync="quantity"/>
 
     <b class="product__price">
-      {{ item.product.price * item.quantity | numberFormat }} ₽
+      {{ item.price * item.quantity | setNumberFormat }} ₽
     </b>
 
     <button class="product__del button-del" type="button"
             aria-label="Удалить товар из корзины"
-            @click.prevent="deleteCartProduct(item.id)">
+            @click.prevent="deleteCartProduct(item.basketItemId)">
       <svg width="20" height="20" fill="currentColor">
         <use xlink:href="#icon-close"></use>
       </svg>
@@ -36,7 +36,8 @@
 </template>
 
 <script>
-import numberFormat from '@/helpers/numberFormat';
+import setNumberFormat from '@/helpers/setNumberFormat';
+import getImage from '@/helpers/getImage';
 import { mapActions } from 'vuex';
 import BlockCounter from '@/components/common/BlockCounter.vue';
 
@@ -47,8 +48,8 @@ export default {
     ...mapActions('cart', ['deleteCartProduct', 'changeCartProductAmount']),
   },
   computed: {
-    image() {
-      return this.item.color.gallery[0].file;
+    computedImage() {
+      return getImage(this.item.product, this.item.color.color.id);
     },
     quantity: {
       get() {
@@ -57,8 +58,7 @@ export default {
       set(value) {
         if (value > 0) {
           this.changeCartProductAmount({
-            productId: this.item.product.id,
-            basketItemId: this.item.id,
+            basketItemId: this.item.basketItemId,
             quantity: value,
           });
         }
@@ -66,7 +66,7 @@ export default {
     },
   },
   filters: {
-    numberFormat,
+    setNumberFormat,
   },
 };
 </script>
