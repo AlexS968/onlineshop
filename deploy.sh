@@ -19,7 +19,7 @@ git add -A
 git commit -m 'deploy'
 
 # отправка в репозиторий на GitHub
-git push -f https://github.com/AlexS968/vue-app.git master:gh-pages
+git push -f https://github.com/AlexS968/onlineshop-vue.git master:gh-pages
 
 # возвращаемся в корневую папку проекта
 cd ..
