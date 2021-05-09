@@ -1,12 +1,20 @@
 <template>
   <ul class="cart__options options">
-    <li class="options__item" v-for="payment in paymentsData" :key="payment.id">
+    <li
+      v-for="payment in paymentsData"
+      :key="payment.id"
+      class="options__item"
+    >
       <label class="options__label">
-        <input class="options__radio sr-only" type="radio"
-               :value="payment.id" v-model="computedPaymentTypeId">
+        <input
+          v-model="computedPaymentTypeId"
+          :value="payment.id"
+          type="radio"
+          class="options__radio sr-only"
+        >
         <span class="options__value">
                     {{ payment.title }}
-                  </span>
+        </span>
       </label>
     </li>
   </ul>

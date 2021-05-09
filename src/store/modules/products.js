@@ -24,7 +24,9 @@ const actions = {
     url.search = new URLSearchParams(params).toString();
 
     commit('changeDataLoading', true, { root: true });
-    await new Promise((resolve) => { setTimeout(resolve, Constants.TIME_OUT); });
+    await new Promise((resolve) => {
+      setTimeout(resolve, Constants.TIME_OUT);
+    });
     try {
       const response = await fetch(url);
       if (response.ok) {

@@ -1,7 +1,12 @@
 <template>
   <li class="cart__item product">
     <div class="product__pic">
-      <img :src="computedImage" width="120" height="120">
+      <img
+        :src="computedImage"
+        width="120"
+        height="120"
+        alt=""
+      >
     </div>
     <h3 class="product__title">
       <router-link :to="{name:'product', params:{id:item.product.id}}">
@@ -11,24 +16,30 @@
     <p class="product__info product__info--color">
       Цвет:
       <span>
-                  <i :style="'background-color: ' + item.color.color.code"></i>
-                  {{ item.color.color.title }}
-                </span>
+        <i :style="'background-color: ' + item.color.color.code"></i>
+        {{ item.color.color.title }}
+      </span>
     </p>
     <span class="product__code">
-                Артикул: {{ item.product.id }}
-              </span>
-
-    <BlockCounter class="product__counter" :amount.sync="quantity"/>
-
+      Артикул: {{ item.product.id }}
+    </span>
+    <BlockCounter
+      :amount.sync="quantity"
+      class="product__counter"
+    />
     <b class="product__price">
       {{ item.price * item.quantity | setNumberFormat }} ₽
     </b>
-
-    <button class="product__del button-del" type="button"
-            aria-label="Удалить товар из корзины"
-            @click.prevent="deleteCartProduct(item.basketItemId)">
-      <svg width="20" height="20" fill="currentColor">
+    <button
+      @click.prevent="deleteCartProduct(item.basketItemId)"
+      aria-label="Удалить товар из корзины"
+      class="product__del button-del" type="button"
+    >
+      <svg
+        width="20"
+        height="20"
+        fill="currentColor"
+      >
         <use xlink:href="#icon-close"></use>
       </svg>
     </button>

@@ -1,14 +1,23 @@
 <template>
-  <main class="content container" v-if="!dataLoading">
+  <main
+    v-if="!dataLoading"
+    class="content container"
+  >
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <router-link class="breadcrumbs__link" :to="{name:'home'}">
+          <router-link
+            :to="{name:'home'}"
+            class="breadcrumbs__link"
+          >
             Каталог
           </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <router-link class="breadcrumbs__link" :to="{name:'cart'}">
+          <router-link
+            :to="{name:'cart'}"
+            class="breadcrumbs__link"
+          >
             Корзина
           </router-link>
         </li>
@@ -18,20 +27,24 @@
           </a>
         </li>
       </ul>
-
       <h1 class="content__title">
-        Заказ оформлен <span>№ {{ orderInfo.id }}</span>
+        Заказ оформлен
+        <span>
+          № {{ orderInfo.id }}
+        </span>
       </h1>
     </div>
-
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <form
+        action="#"
+        method="POST"
+        class="cart__form form"
+      >
         <div class="cart__field">
           <p class="cart__message">
             Благодарим за выбор нашего магазина. На Вашу почту придет письмо с деталями заказа.
             Наши менеджеры свяжутся с Вами в течение часа для уточнения деталей доставки.
           </p>
-
           <ul class="dictionary">
             <li class="dictionary__item">
               <span class="dictionary__key">
@@ -75,9 +88,7 @@
             </li>
           </ul>
         </div>
-
         <CartBlock :cart-block-data="cartBlockData"/>
-
       </form>
     </section>
   </main>

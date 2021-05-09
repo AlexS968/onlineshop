@@ -1,24 +1,39 @@
 <template>
   <li class="catalog__item">
-    <router-link class="catalog__pic" :to="{name:'product', params:{id:product.id}}">
-      <img :src="computedImage" :alt="product.title">
+    <router-link
+      :to="{name:'product', params:{id:product.id}}"
+      class="catalog__pic"
+    >
+      <img
+        :src="computedImage"
+        :alt="product.title"
+      >
     </router-link>
-
     <h3 class="catalog__title">
       <router-link :to="{name:'product', params:{id:product.id}}">
         {{ product.title }}
       </router-link>
     </h3>
-
-    <div class="inline">
-      <span class="catalog__price">{{ product.price | setNumberFormat }} ₽</span>
+    <div class="inline_block">
+      <div class="inline">
+        <span class="catalog__price">
+          {{ product.price | setNumberFormat }} ₽
+        </span>
+      </div>
+      <div class="inline right">
+        <button
+          @click.prevent="addToCart"
+          class="button--primery"
+        >
+          В корзину
+        </button>
+      </div>
     </div>
-    <div class="inline right">
-      <button class="button--primery" @click.prevent="addToCart">В корзину</button>
-    </div>
-
-    <BlockColors type="radio" :colors="colors" :selected-color-id.sync="selectedColorId"/>
-
+    <BlockColors
+      :colors="colors"
+      :selected-color-id.sync="selectedColorId"
+      type="radio"
+    />
   </li>
 </template>
 
@@ -74,12 +89,30 @@ export default {
 </script>
 
 <style lang="stylus">
+
+.catalog__item {
+  background-color: #f5f5f5
+  box-shadow 0 0 10px 10px #f5f5f5
+}
+
+.inline_block {
+  padding: 0 5px
+  text-align: left
+}
+
 .inline {
   display inline-flex
+  height 25px
+  width 150px
 }
 
 .right {
-  padding-left 130px
+  width fit-content
+  padding-left 38px
 }
 
+.button--primery {
+  background-color #f00
+  box-shadow: 5px 5px 10px tomato
+}
 </style>

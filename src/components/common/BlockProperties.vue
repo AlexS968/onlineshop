@@ -1,13 +1,27 @@
 <template>
-  <ul class="check-list" v-if="data">
-    <li class="check-list__item" v-for="element in data.items" :key="element.id">
+  <ul
+    v-if="data"
+    class="check-list"
+  >
+    <li
+      v-for="element in data.items"
+      :key="element.id"
+      class="check-list__item"
+    >
       <label class="check-list__label">
-        <input class="check-list__check sr-only" type="checkbox"
-               name="material" :value="element.id" v-model.number="idL">
+        <input
+          v-model.number="idL"
+          :value="element.id"
+          type="checkbox"
+          name="material"
+          class="check-list__check sr-only"
+        >
         <span class="check-list__desc">
                     {{ element.title }}
-                    <span>({{ element.productsCount }})</span>
-                  </span>
+                    <span>
+                      {{ element.productsCount }}
+                    </span>
+        </span>
       </label>
     </li>
   </ul>

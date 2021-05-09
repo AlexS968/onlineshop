@@ -32,8 +32,6 @@ const actions = {
     const params = [['userAccessKey', rootGetters.getUserAccessKey]];
     url.search = new URLSearchParams(params).toString();
 
-    this.orderError = {};
-    this.orderErrorMessage = '';
     commit('changeDataLoading', true, { root: true });
     await new Promise((resolve) => { setTimeout(resolve, Constants.TIME_OUT); });
     try {
@@ -48,6 +46,8 @@ const actions = {
       if (response.ok) {
         commit('updateOrderInfo', data);
         commit('cart/resetCart', null, { root: true });
+      } else {
+        commit('updateOrderInfo', orderData);
       }
       commit('changeDataLoading', false, { root: true });
       return data;

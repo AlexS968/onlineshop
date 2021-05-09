@@ -30,8 +30,6 @@ export default new Vuex.Store({
       return state.userAccessKey;
     },
   },
-  actions: {
-  },
   modules: {
     products,
     filters,

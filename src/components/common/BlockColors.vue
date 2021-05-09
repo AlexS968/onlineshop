@@ -1,14 +1,25 @@
 <template>
-    <ul class="colors colors--black">
-        <li class="colors__item" v-for="color in colors" :key="color.id">
-            <label class="colors__label">
-                <input class="colors__radio sr-only" :type="type" :value="color.id"
-                       v-model="computedColorId">
-                <span class="colors__value" :style="'background-color: ' + color.code">
-                  </span>
-            </label>
-        </li>
-    </ul>
+  <ul class="colors colors--black">
+    <li
+      v-for="color in colors"
+      :key="color.id"
+      class="colors__item"
+    >
+      <label class="colors__label">
+        <input
+          v-model="computedColorId"
+          :type="type"
+          :value="color.id"
+          class="colors__radio sr-only"
+        >
+        <span
+          :style="'background-color: ' + color.code"
+          class="colors__value"
+        >
+        </span>
+      </label>
+    </li>
+  </ul>
 </template>
 
 <script>

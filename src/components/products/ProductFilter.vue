@@ -1,56 +1,106 @@
 <template>
   <aside class="filter">
-    <form class="filter__form form" action="#" method="get" @submit.prevent="submit">
-
+    <form
+      @submit.prevent="submit"
+      action="#"
+      method="get"
+      class="filter__form form"
+    >
       <fieldset class="form__block">
-        <legend class="form__legend">Цена</legend>
+        <legend class="form__legend">
+          Цена
+        </legend>
         <label class="form__label form__label--price">
-          <input class="form__input" type="text" name="min-price" v-model.number="filters.minPrice">
-          <span class="form__value">От</span>
+          <input
+            v-model.number="filters.minPrice"
+            type="text"
+            name="min-price"
+            placeholder="0"
+            class="form__input"
+          >
+          <span class="form__value">
+            От
+          </span>
         </label>
         <label class="form__label form__label--price">
-          <input class="form__input" type="text" name="max-price" v-model.number="filters.maxPrice">
-          <span class="form__value">До</span>
+          <input
+            v-model.number="filters.maxPrice"
+            type="text"
+            name="max-price"
+            placeholder="0"
+            class="form__input"
+          >
+          <span class="form__value">
+            До
+          </span>
         </label>
       </fieldset>
-
       <fieldset class="form__block">
-        <legend class="form__legend">Категория</legend>
-        <label class="form__label form__label--select" v-if="categoriesData">
-          <select class="form__select" name="category"
-                  v-model.number="filters.categoryId">
-            <option value="0">Все категории</option>
-            <option :value="category.id" v-for="category in categoriesData.items"
-                    :key="category.id">
+        <legend class="form__legend">
+          Категория
+        </legend>
+        <label
+          v-if="categoriesData"
+          class="form__label form__label--select"
+        >
+          <select
+            v-model.number="filters.categoryId"
+            name="category"
+            class="form__select"
+          >
+            <option value="0">
+              Все категории
+            </option>
+            <option
+              v-for="category in categoriesData.items"
+              :key="category.id"
+              :value="category.id"
+            >
               {{ category.title }}
             </option>
           </select>
         </label>
       </fieldset>
-
       <fieldset class="form__block">
         <legend class="form__legend">Цвет</legend>
-        <BlockColors v-if="colorsData" type="checkbox" :colors="colorsData.items"
-                     :selected-color-id.sync="filters.colorIds"/>
+        <BlockColors v-if="colorsData"
+                     :colors="colorsData.items"
+                     :selected-color-id.sync="filters.colorIds"
+                     type="checkbox"
+        />
       </fieldset>
-
       <fieldset class="form__block">
-        <legend class="form__legend">Материал</legend>
-        <BlockProperties v-if="materialsData" :data="materialsData"
-                         :property-ids.sync="filters.materialIds"/>
+        <legend class="form__legend">
+          Материал
+        </legend>
+        <BlockProperties
+          v-if="materialsData"
+          :data="materialsData"
+          :property-ids.sync="filters.materialIds"
+        />
       </fieldset>
-
       <fieldset class="form__block">
-        <legend class="form__legend">Коллекция</legend>
-        <BlockProperties v-if="seasonData" :data="seasonData"
-                         :property-ids.sync="filters.seasonIds"/>
+        <legend class="form__legend">
+          Коллекция
+        </legend>
+        <BlockProperties
+          v-if="seasonData"
+          :data="seasonData"
+          :property-ids.sync="filters.seasonIds"
+        />
       </fieldset>
-
-      <button class="filter__submit button button--primery" type="submit">
+      <button
+        type="submit"
+        class="filter__submit button button--primery"
+      >
         Применить
       </button>
-      <button class="filter__reset button button--second" type="button"
-              v-if="!filterIsEmpty" @click.prevent="reset">
+      <button
+        v-if="!filterIsEmpty"
+        @click.prevent="reset"
+        type="button"
+        class="filter__reset button button--second"
+      >
         Сбросить
       </button>
     </form>
@@ -84,7 +134,7 @@ export default {
           }
           return v;
         })
-        .every((el) => el === 0);
+        .every((el) => el === 0 || el === '');
     },
   },
   methods: {
@@ -113,3 +163,10 @@ export default {
   },
 };
 </script>
+
+<style lang="stylus">
+.filter {
+  background-color #f5f5f5
+  box-shadow 0 0 10px 10px #f5f5f5
+}
+</style>

@@ -1,29 +1,37 @@
 <template>
-  <main class="content container" v-if="!dataLoading">
+  <main class="content container">
     <div class="content__top">
-
       <div class="content__row">
-        <h1 class="content__title">
-          Каталог
-        </h1>
+        <h1 class="content__title">Каталог</h1>
         <span class="content__info">
           {{ productsNumber }}
         </span>
       </div>
     </div>
-
     <div class="content__catalog">
-
       <ProductFilter :current-filters.sync="filters"/>
-
       <section class="catalog">
-        <ProductList v-if="productsData" :product-list="productsData.items"/>
+        <div v-if="dataLoading">
+          <div>
+            <BlockPreloader class="preloader big"/>
+          </div>
+          <div class="container">
+            Данные загружаются...
+          </div>
+        </div>
+        <div v-else>
+          <ProductList
+            v-if="productsData"
+            :product-list="productsData.items"
+          />
+        </div>
       </section>
-
     </div>
-
-    <BasePagination v-model="page"
-                    :count="countProducts" :per-page.sync="productsPerPage"/>
+    <BasePagination
+      v-model="page"
+      :count="countProducts"
+      :per-page.sync="productsPerPage"
+    />
   </main>
 </template>
 
@@ -33,6 +41,7 @@ import Constants from '@/config';
 import ProductList from '@/components/products/ProductList.vue';
 import BasePagination from '@/components/base/BasePagination.vue';
 import ProductFilter from '@/components/products/ProductFilter.vue';
+import BlockPreloader from '@/components/common/BlockPreloader.vue';
 import { mapActions, mapState } from 'vuex';
 
 export default {
@@ -43,7 +52,12 @@ export default {
       productsPerPage: 12,
     };
   },
-  components: { ProductList, BasePagination, ProductFilter },
+  components: {
+    ProductList,
+    BasePagination,
+    ProductFilter,
+    BlockPreloader,
+  },
   computed: {
     ...mapState('products', ['productsData']),
     ...mapState(['dataLoading']),
@@ -55,7 +69,10 @@ export default {
         ['товар', 'товара', 'товаров'])}`;
     },
     changedData() {
-      const { filters, productsPerPage } = this;
+      const {
+        filters,
+        productsPerPage,
+      } = this;
       return {
         filters,
         productsPerPage,

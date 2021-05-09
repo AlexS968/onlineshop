@@ -1,7 +1,15 @@
 <template>
-  <BaseFormField :title="title" :error="error">
+  <BaseFormField
+    :title="title"
+    :error="error"
+  >
     <label>
-      <input class="form__input" v-model='dataValue' :type="type" :placeholder="placeholder">
+      <input
+        v-model='dataValue'
+        :type="type"
+        :placeholder="placeholder"
+        class="form__input"
+      >
     </label>
   </BaseFormField>
 </template>

@@ -6,10 +6,20 @@ const Constants = {
     materialIds: [],
     seasonIds: [],
     colorIds: [],
-    minPrice: 0,
-    maxPrice: 0,
+    minPrice: '',
+    maxPrice: '',
   },
   PAGINATION_LIST: [9, 18, 27],
+  PRODUCT_INFO: [
+    {
+      isActive: true,
+      title: 'Информация о товаре',
+    },
+    {
+      isActive: false,
+      title: 'Доставка и возврат',
+    },
+  ],
 };
 
 export default Constants;

@@ -1,15 +1,33 @@
 <template>
   <div class="form__counter">
-    <button type="button" aria-label="Убрать один товар" @click.prevent="reduceAmount">
-      <svg width="12" height="12" fill="currentColor">
+    <button
+      @click.prevent="reduceAmount"
+      type="button"
+      aria-label="Убрать один товар"
+    >
+      <svg
+        width="12"
+        height="12"
+        fill="currentColor"
+      >
         <use xlink:href="#icon-minus"></use>
       </svg>
     </button>
-
-    <input type="text" name="count" v-model.number="computedAmount">
-
-    <button type="button" aria-label="Добавить один товар" @click.prevent="computedAmount++">
-      <svg width="12" height="12" fill="currentColor">
+    <input
+      v-model.number="computedAmount"
+      type="text"
+      name="count"
+    >
+    <button
+      @click.prevent="computedAmount++"
+      type="button"
+      aria-label="Добавить один товар"
+    >
+      <svg
+        width="12"
+        height="12"
+        fill="currentColor"
+      >
         <use xlink:href="#icon-plus"></use>
       </svg>
     </button>

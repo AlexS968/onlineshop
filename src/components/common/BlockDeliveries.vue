@@ -1,12 +1,23 @@
 <template>
   <ul class="cart__options options">
-    <li class="options__item" v-for="delivery in deliveriesData" :key="delivery.id">
+    <li
+      v-for="delivery in deliveriesData"
+      :key="delivery.id"
+      class="options__item"
+    >
       <label class="options__label">
-        <input class="options__radio sr-only" type="radio"
-               :value="delivery.id" v-model="computedDeliveryTypeId">
+        <input
+          v-model="computedDeliveryTypeId"
+          :value="delivery.id"
+          type="radio"
+          class="options__radio sr-only"
+        >
         <span class="options__value">
-                    {{ delivery.title }} <b>{{ delivery.price | setNumberFormat }} ₽</b>
-                  </span>
+          {{ delivery.title }}
+          <b>
+            {{ delivery.price | setNumberFormat }} ₽
+          </b>
+        </span>
       </label>
     </li>
   </ul>

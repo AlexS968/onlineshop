@@ -1,8 +1,14 @@
 <template>
-  <BaseFormField :title="title" :error="error">
+  <BaseFormField
+    :title="title"
+    :error="error"
+  >
     <label>
-      <textarea class="form__input form__input--area"
-                v-model='dataValue' :placeholder="placeholder"/>
+      <textarea
+        v-model='dataValue'
+        :placeholder="placeholder"
+        class="form__input form__input--area"
+      />
     </label>
   </BaseFormField>
 </template>

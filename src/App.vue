@@ -1,19 +1,22 @@
 <template>
   <div>
     <BaseHeader/>
-    <ErrorPopup v-if="dataTransferError && errorData" @closeErrPopup="closeErrPopup">
-      <div><br>
-        Уважаемый пользователь,<br>
-        при загрузке данных произошла ошибка<br><br>
-        <h3>{{ getMessage }}</h3><br>
-        Просьба обратиться в техподдержку.<br>
+    <ErrorPopup
+      v-if="dataTransferError && errorData"
+      @closeErrPopup="closeErrPopup"
+    >
+      <div>
         <br>
+        Уважаемый пользователь,
+        <br>
+        при загрузке данных произошла ошибка
+        <br><br>
+        <h3>{{ getMessage }}</h3>
+        <br>
+        Просьба обратиться в техподдержку.
+        <br><br>
       </div>
     </ErrorPopup>
-    <div v-if="dataLoading">
-      <div><BlockPreloader class="preloader big"/></div>
-      <div class="container">Данные загружаются...</div>
-    </div>
     <router-view/>
     <BaseFooter/>
   </div>
@@ -22,7 +25,6 @@
 <script>
 import BaseHeader from '@/components/base/BaseHeader.vue';
 import BaseFooter from '@/components/base/BaseFooter.vue';
-import BlockPreloader from '@/components/common/BlockPreloader.vue';
 import ErrorPopup from '@/components/errors/ErrorPopup.vue';
 import {
   mapState, mapActions, mapMutations, mapGetters,
@@ -32,7 +34,6 @@ export default {
   components: {
     BaseHeader,
     BaseFooter,
-    BlockPreloader,
     ErrorPopup,
   },
   computed: {

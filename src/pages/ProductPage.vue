@@ -1,14 +1,17 @@
 <template>
-  <main class="content container" v-if="!dataLoading">
-    <div class="content__top" v-if="productData">
+  <main class="content container" v-if="productData">
+    <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <router-link class="breadcrumbs__link" :to="{ name: 'home' }">
+          <router-link
+            :to="{ name: 'home' }"
+            class="breadcrumbs__link"
+          >
             Каталог
           </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#">
+          <a href="#" class="breadcrumbs__link">
             {{ productData.category.title }}
           </a>
         </li>
@@ -19,107 +22,132 @@
         </li>
       </ul>
     </div>
-
-    <section class="item">
-      <div v-if="productAddSending">
+    <section v-if="dataLoading">
+      <div>
         <BlockPreloader class="preloader big"/>
       </div>
-      <div class="item__pics pics" v-else>
+      <div class="container">
+        Данные загружаются...
+      </div>
+    </section>
+    <section
+      v-else
+      class="item"
+    >
+      <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" :src="computedImage"
-               srcset="" :alt="productData.title">
+          <img
+            :src="computedImage"
+            :alt="productData.title"
+            width="570"
+            height="570"
+            srcset=""
+          >
         </div>
-        <ul class="pics__list" v-if="computedImageList">
-          <li class="pics__item" v-for="image in computedImageList" :key="image">
+        <ul
+          v-if="computedImageList"
+          class="pics__list"
+        >
+          <li
+            v-for="image in computedImageList"
+            :key="image"
+            class="pics__item"
+          >
             <a href="" class="pics__link pics__link--current">
-              <img width="98" height="98" :src="image" alt="Название товара">
+              <img
+                :src="image"
+                width="98"
+                height="98"
+                alt="Название товара"
+              >
             </a>
           </li>
         </ul>
       </div>
-
       <div class="item__info">
-        <span class="item__code">Артикул: {{ productData.id }}</span>
+        <span class="item__code">
+          Артикул: {{ productData.id }}
+        </span>
         <h2 class="item__title">
           {{ productData.title }}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST" @submit.prevent="addToCart">
+          <form
+            @submit.prevent="addToCart"
+            action="#"
+            method="POST"
+            class="form"
+          >
             <div class="item__row item__row--center">
-
               <BlockCounter :amount.sync="productAmount"/>
-
               <b class="item__price">
                 {{ productData.price * productAmount | setNumberFormat }} ₽
               </b>
             </div>
-
             <div class="item__row">
               <fieldset class="form__block">
-                <legend class="form__legend">Цвет</legend>
-                <BlockColors class="white__border__color" type="radio"
-                             :colors="colors" :selected-color-id.sync="selectedColorId"/>
+                <legend class="form__legend">
+                  Цвет
+                </legend>
+                <BlockColors
+                  :selected-color-id.sync="selectedColorId"
+                  :colors="colors"
+                  type="radio"
+                  class="white__border__color"
+                />
               </fieldset>
-
               <fieldset class="form__block">
-                <legend class="form__legend">Размер</legend>
-                <label class="form__label form__label--small form__label--select"
-                       v-if="productData.sizes">
-                  <select class="form__select" name="category" v-model="selectedSize">
-                    <option :value="null" selected disabled hidden>Выберите размер</option>
-                    <option v-for="size in productData.sizes" :key="size.id" :value="size">
+                <legend class="form__legend">
+                  Размер
+                </legend>
+                <label
+                  v-if="productData.sizes"
+                  class="form__label form__label--small form__label--select"
+                >
+                  <select
+                    v-model="selectedSize"
+                    name="category"
+                    class="form__select"
+                  >
+                    <option
+                      :value="null"
+                      selected
+                      disabled
+                      hidden
+                    >
+                      Выберите размер
+                    </option>
+                    <option
+                      v-for="size in productData.sizes"
+                      :key="size.id"
+                      :value="size"
+                    >
                       {{ size.title }}
                     </option>
                   </select>
                 </label>
               </fieldset>
             </div>
-
-            <button class="item__button button button--primery"
-                    type="submit" :disabled="productAddSending || !selectedSize">
-              <div v-if="productAddSending">Добавляем товар...</div>
-              <div v-else>В корзину</div>
+            <button
+              :disabled="productAddSending || !selectedSize"
+              type="submit"
+              class="item__button button button--primery"
+            >
+              <BlockPreloader
+                v-if="productAddSending"
+                class="preloader small"
+              />
+              <div v-else>
+                В корзину
+              </div>
             </button>
-
-            <div v-if="productAdded">Товар добавлен в корзину</div>
+            <div v-if="productAdded">
+              Товар добавлен в корзину
+            </div>
           </form>
         </div>
       </div>
-
-      <div class="item__desc">
-        <ul class="tabs">
-          <li class="tabs__item">
-            <a class="tabs__link tabs__link--current">
-              Информация о товаре
-            </a>
-          </li>
-          <li class="tabs__item">
-            <a class="tabs__link" href="#">
-              Доставка и возврат
-            </a>
-          </li>
-        </ul>
-
-        <div class="item__content">
-          <h3>Состав:</h3>
-
-          <p>
-            60% хлопок<br>
-            30% полиэстер<br>
-          </p>
-
-          <h3>Уход:</h3>
-
-          <p>
-            Машинная стирка при макс. 30ºC короткий отжим<br>
-            Гладить при макс. 110ºC<br>
-            Не использовать машинную сушку<br>
-            Отбеливать запрещено<br>
-            Не подвергать химчистке<br>
-          </p>
-
-        </div>
-      </div>
+      <ProductInfo :product-data.sync="productData"/>
     </section>
   </main>
 </template>
@@ -131,6 +159,7 @@ import getImageList from '@/helpers/getImageList';
 import BlockColors from '@/components/common/BlockColors.vue';
 import BlockCounter from '@/components/common/BlockCounter.vue';
 import BlockPreloader from '@/components/common/BlockPreloader.vue';
+import ProductInfo from '@/components/products/ProductInfo.vue';
 import { mapActions, mapState } from 'vuex';
 
 export default {
@@ -147,6 +176,7 @@ export default {
     BlockColors,
     BlockCounter,
     BlockPreloader,
+    ProductInfo,
   },
   computed: {
     ...mapState(['dataLoading']),

@@ -1,14 +1,20 @@
 <template>
-  <main class="content container" v-if="!dataLoading">
+  <main class="content container">
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <router-link class="breadcrumbs__link" :to="{name:'home'}">
+          <router-link
+            :to="{name:'home'}"
+            class="breadcrumbs__link"
+          >
             Каталог
           </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <router-link class="breadcrumbs__link" :to="{name:'cart'}">
+          <router-link
+            :to="{name:'cart'}"
+            class="breadcrumbs__link"
+          >
             Корзина
           </router-link>
         </li>
@@ -18,43 +24,66 @@
           </a>
         </li>
       </ul>
-
       <div class="content__row">
         <h1 class="content__title">
           Оформление заказа
         </h1>
       </div>
     </div>
-
     <section class="cart">
       <form class="cart__form form" action="#" method="POST" @submit.prevent="toOrder">
         <div class="cart__field">
           <div class="cart__data">
-            <BaseFormText v-model="orderData.name" title="ФИО"
-                          placeholder="Введите ваше полное имя" :error="orderError.name"/>
-            <BaseFormText v-model="orderData.address" title="Адрес доставки"
-                          placeholder="Введите ваш адрес" :error="orderError.address"/>
-            <BaseFormText v-model="orderData.phone" title="Телефон" type="tel"
-                          placeholder="Введите ваш телефон" :error="orderError.phone"/>
-            <BaseFormText v-model="orderData.email" title="Email" type="email"
-                          placeholder="Введите ваш Email" :error="orderError.email"/>
-            <BaseFormTextarea v-model="orderData.comment" title="Комментарий к заказу"
-                              placeholder="Ваши пожелания" :error="orderError.comment"/>
+            <BaseFormText
+              v-model="orderData.name"
+              :error="orderError.name"
+              title="ФИО"
+              placeholder="Иванов Иван Иванович"
+            />
+            <BaseFormText
+              v-model="orderData.address"
+              :error="orderError.address"
+              title="Адрес доставки"
+              placeholder="111111 Москва ул.Зеленая 9-14"
+            />
+            <BaseFormText
+              v-model="orderData.phone"
+              :error="orderError.phone"
+              title="Телефон" type="tel"
+              placeholder="+7 123 4567890"
+            />
+            <BaseFormText
+              v-model="orderData.email"
+              :error="orderError.email"
+              type="email"
+              title="email@mail.ru"
+              placeholder="Введите ваш Email"
+            />
+            <BaseFormTextarea
+              v-model="orderData.comment"
+              :error="orderError.comment"
+              title="Комментарий к заказу"
+              placeholder="Ваши пожелания"
+            />
           </div>
-
           <div class="cart__options">
             <h3 class="cart__title">Доставка</h3>
-            <BlockDeliveries :deliveries-data="deliveriesData"
-                             :delivery-type-id.sync="orderData.deliveryTypeId"/>
+            <BlockDeliveries
+              :deliveries-data="deliveriesData"
+              :delivery-type-id.sync="orderData.deliveryTypeId"
+            />
             <h3 class="cart__title">Оплата</h3>
-            <BlockPayments :payments-data="paymentsData"
-                           :payment-type-id.sync="orderData.paymentTypeId"/>
+            <BlockPayments
+              :payments-data="paymentsData"
+              :payment-type-id.sync="orderData.paymentTypeId"
+            />
           </div>
         </div>
-
         <CartBlock :cart-block-data="cartBlockData"/>
-
-        <div class="cart__error form__error-block" v-if="orderErrorMessage">
+        <div
+          v-if="orderErrorMessage"
+          class="cart__error form__error-block"
+        >
           <h4>Заявка не отправлена!</h4>
           <p>
             {{ orderErrorMessage }}
@@ -77,7 +106,11 @@ import enumerate from '@/helpers/enumerate';
 
 export default {
   components: {
-    BaseFormText, BaseFormTextarea, CartBlock, BlockDeliveries, BlockPayments,
+    BaseFormText,
+    BaseFormTextarea,
+    CartBlock,
+    BlockDeliveries,
+    BlockPayments,
   },
   data() {
     return {
@@ -92,7 +125,7 @@ export default {
   computed: {
     ...mapGetters('cart', ['cartDetailProducts', 'cartTotalPrice', 'cartTotalAmount']),
     ...mapState(['dataLoading']),
-    ...mapState('order', ['deliveriesData', 'paymentsData']),
+    ...mapState('order', ['orderInfo', 'deliveriesData', 'paymentsData']),
     productsNumber() {
       return `${this.cartTotalAmount} ${enumerate(this.cartTotalAmount,
         ['товар', 'товара', 'товаров'])}`;
@@ -120,13 +153,19 @@ export default {
   methods: {
     ...mapActions('order', ['loadDeliveries', 'loadPayments', 'makeOrder']),
     toOrder() {
+      this.orderError = {};
+      this.orderErrorMessage = '';
       this.makeOrder(this.orderData)
         .then((data) => {
           if (data.error) {
+            this.orderData = this.orderInfo;
             this.orderError = data.error.request || {};
             this.orderErrorMessage = data.error.message;
           } else {
-            this.$router.push({ name: 'orderInfo', params: { id: data.id } });
+            this.$router.push({
+              name: 'orderInfo',
+              params: { id: data.id },
+            });
           }
         });
     },
