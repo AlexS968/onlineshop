@@ -56,8 +56,8 @@
               v-model="orderData.email"
               :error="orderError.email"
               type="email"
-              title="email@mail.ru"
-              placeholder="Введите ваш Email"
+              title="Введите ваш Email"
+              placeholder="email@mail.ru"
             />
             <BaseFormTextarea
               v-model="orderData.comment"
